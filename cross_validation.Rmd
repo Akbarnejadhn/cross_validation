@@ -118,3 +118,33 @@ cv_df =
          rmse_wiggly = map2_dbl(wiggly_mod, test, ~rmse(model = .x, data = .y)))
 ```
 
+Visulaizing this:
+```{r}
+
+cv_df %>% 
+  select(starts_with("rmse")) %>% 
+  pivot_longer(
+    everything(),
+    names_to = "model", 
+    values_to = "rmse",
+    names_prefix = "rmse_") %>% 
+  mutate(model = fct_inorder(model)) %>% 
+  ggplot(aes(x = model, y = rmse)) + geom_violin()
+```
+
+# Now work on an example:
+```{r}
+
+#data import and visualize
+
+child_growth = read_csv("./data/nepalese_children.csv")
+
+child_growth %>% 
+  ggplot(aes(x = weight, y = armc)) + 
+  geom_point(alpha = .5)
+```
+
+```{r}
+
+```
+
