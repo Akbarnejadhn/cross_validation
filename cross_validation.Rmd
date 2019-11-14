@@ -142,9 +142,36 @@ child_growth = read_csv("./data/nepalese_children.csv")
 child_growth %>% 
   ggplot(aes(x = weight, y = armc)) + 
   geom_point(alpha = .5)
-```
 
+child_growth =
+  child_growth %>% 
+  mutate(weight_cp = (weight > 7) * (weight - 7))
+```
+it looks non-linear to we want to add something to this mkodel to make this look more linear!
+
+Fitting three models:
+
+linear
+
+piece-wise linear
+
+smooth linear
 ```{r}
 
+linear_mod = lm(armc ~ weight, data = child_growth)
+pwl_mod = lm(armc ~ weight + weight_cp, data = child_growth)
+smooth_mod = gam(armc ~ s(weight), data = child_growth)
+```
+
+graphing them:
+```{r}
+
+child_growth %>% 
+  gather_predictions(linear_mod, pwl_mod, smooth_mod) %>% 
+  mutate(model = fct_inorder(model)) %>% 
+  ggplot(aes(x = weight, y = armc)) + 
+  geom_point(alpha = .5) +
+  geom_line(aes(y = pred), color = "red") + 
+  facet_grid(~model)
 ```
 
